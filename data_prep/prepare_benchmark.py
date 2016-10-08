@@ -9,6 +9,7 @@ region = 232
 
 # list all model runs
 runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
+#runs = ['/scratch/rsb/Test/15030512_COSMO_E/']
 
 # go through each model run
 for run in runs:
