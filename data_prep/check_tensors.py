@@ -1,0 +1,21 @@
+#! /apps/escha/UES/RH6.7/easybuild/software/Python/3.5.0-gmvolf-15.11/bin/python
+
+import re
+import os
+import glob
+
+datdir = '/scratch/rsb/Test/'
+
+crit_num = 24
+
+# list all directories with given pattern
+folders = glob.glob(datdir + '*COSMO_E')
+
+# go through each directory & check if there are 24 files
+for folder in folders:
+	# check if there are 12 * 121 files
+    num_files = len(glob.glob(folder + '/tensor*'))
+    
+    if num_files < crit_num:
+        print(folder)
+
