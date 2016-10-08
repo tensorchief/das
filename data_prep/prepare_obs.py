@@ -78,7 +78,7 @@ def main(region, threshold=10):
     model_runs = ['/scratch/rsb/Test/14120912_COSMO_E']
     #model_runs = glob.glob('/scratch/rsb/Test/*_COSMO_E')
     for run in model_runs:
-        tensors = sorted(glob.glob(run + '/tensor*'))
+        tensors = sorted(glob.glob(run + '/tensor*'+str(region)+'.npy'))
         mod_ini = datetime.strptime(re.match('.+/([0-9]{8})_COSMO_E', run).group(1),'%y%m%d%H')
         timesteps = [int(re.match('.+/tensor_([0-9]{3})_*',tensor).group(1)) for tensor in tensors]
 

@@ -18,7 +18,7 @@ for run in runs:
     identifier = re.match('.+/([0-9]{8})_COSMO_E',run).group(1)
     
     # check obs labels for missing values
-    obs = np.load(glob.glob(os.path.join(run, 'labels_*_str(region).npy'))[0])
+    obs = np.load(glob.glob(os.path.join(run, 'labels_*_'+str(region)+'.npy'))[0])
     bench = np.load(glob.glob(os.path.join(run, 'benchmark_'+str(region)+'.npy'))[0])
     
     # remove missing time steps
