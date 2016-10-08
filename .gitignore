@@ -4,3 +4,4 @@
 *.ptx
 *.cubin
 *.fatbin
+log_MNIST_deeper_GPU.txt
