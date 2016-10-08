@@ -19,8 +19,8 @@ for run in runs:
     identifier = re.match('.+/([0-9]{8})_COSMO_E',run).group(1)
     
     # check obs labels for missing values
-    obs = np.load(glob.glob(os.path.join(run, 'labels_*.npy'))[0])
-    steps = sorted(glob.glob(os.path.join(run, 'tensor*.npy')))
+    obs = np.load(glob.glob(os.path.join(run, 'labels_*_str(region).npy'))[0])
+    steps = sorted(glob.glob(os.path.join(run, 'tensor*_str(region).npy')))
 
     # load model data
     model_data = list()
