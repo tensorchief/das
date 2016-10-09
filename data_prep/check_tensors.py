@@ -7,6 +7,7 @@ import glob
 datdir = '/scratch/rsb/Test/'
 
 crit_num = 24
+region = 144
 
 # list all directories with given pattern
 folders = glob.glob(datdir + '*COSMO_E')
@@ -14,7 +15,7 @@ folders = glob.glob(datdir + '*COSMO_E')
 # go through each directory & check if there are 24 files
 for folder in folders:
 	# check if there are 12 * 121 files
-    num_files = len(glob.glob(folder + '/tensor*'))
+    num_files = len(glob.glob(folder + '/tensor*' + str(region) + '.npy'))
     
     if num_files < crit_num:
         print(folder)

@@ -36,7 +36,7 @@ for run in runs:
         
         # save new arrays
         np.save(os.path.join(run,'benchmark_data_' + identifier + '_' + str(region) + '.npy'), bench)
-    
+        np.save(os.path.join(run,'benchmark_labels_' + identifier + '_' + str(region) + '.npy'), obs)    
     except:
         with open('error_log.txt','a') as logfile:
             logfile.write('could not rearrange ' + run + '\n')

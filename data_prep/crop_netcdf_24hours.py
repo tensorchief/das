@@ -109,7 +109,7 @@ def main(chunk, threshold=10):
     :param threshold: The threshold to differentiate between events and non-events (below = 0, above = 1).
     :return:
     """
-    region = 144
+    region = 310
     num_chunks = 15
     centroid = get_centroid(region)
 

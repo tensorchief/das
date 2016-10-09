@@ -12,9 +12,9 @@ print(training_runs)
 destination = '/users/rsb/Training_set/'
 
 for run in training_runs:
-    files = glob.glob(run.strip() + '/benchmark_data*')
+    files = glob.glob(run.strip() + '/benchmark_labels*')
     for item in files:
         print(item)
-        file_name = re.match('.*/(benchmark_.*\.npy)',item).group(1)
+        file_name = re.match('.*/(benchmark_labels.*\.npy)',item).group(1)
         print(file_name)
         copyfile(item,destination+file_name)
