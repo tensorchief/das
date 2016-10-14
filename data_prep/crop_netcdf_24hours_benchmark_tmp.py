@@ -113,8 +113,8 @@ def main(chunk, threshold=10):
     :param threshold: The threshold to differentiate between events and non-events (below = 0, above = 1).
     :return:
     """
-    region = 310
-    prob_crit = 0.7
+    region = 144
+    prob_crit = 0.4
 
     # build member paths
     datdir = '/scratch/rsb/Test/16060800_COSMO_E/'
@@ -185,13 +185,13 @@ def main(chunk, threshold=10):
             # collect labels
             prec_all = np.vstack((prec_all,label))
             
-            with open('log'+str(chunk)+'.txt','a') as logfile:
+            with open('log_tmp_'+str(chunk)+'.txt','a') as logfile:
                 logfile.write('done with ' + timestep + '\n')
 
         # Write to file
         np.save(os.path.join(run,'benchmark_' + str(region) + '.npy'),prec_all)
         
-        with open('log'+str(chunk)+'.txt','a') as logfile:
+        with open('log_tmp_'+str(chunk)+'.txt','a') as logfile:
             logfile.write('done with ' + run + '\n')
 
     print('done')
