@@ -5,6 +5,7 @@ import os
 import glob
 
 datdir = '/scratch/rsb/Test/'
+region = 144
 
 # list all directories with given pattern
 folders = glob.glob(datdir + '*COSMO_E')
@@ -12,6 +13,6 @@ folders = glob.glob(datdir + '*COSMO_E')
 # go through each directory & check if there are 24 files
 for folder in folders:
 	# check if there is a file called benchmark*
-    if not glob.glob(folder + '/benchmark*'):
+    if not glob.glob(folder + '/benchmark*' + str(region) + '*'):
         print(folder)
 

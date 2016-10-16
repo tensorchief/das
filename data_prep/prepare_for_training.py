@@ -5,7 +5,7 @@ import glob
 import os
 import re
 
-region = 232
+region = 144
 
 # list all model runs
 runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
