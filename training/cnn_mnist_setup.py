@@ -61,12 +61,14 @@ def construct_np_arrays(runs):
             
     return model_data_np, labels_np
 
+region = 232
+
 # Data loading & preprocessing
 datdir = '/home/silviar/Dokumente/Training_set/'
-model_files = sorted(glob.glob(datdir + 'training_data_*'))
+model_files = sorted(glob.glob(datdir + 'training_data_*'+str(region) + '*'))
 
 # do k-folds
-kf = KFold(len(model_files),n_folds = 10, shuffle = True)
+kf = StratifiedKFold(len(model_files),n_folds = 10, shuffle = True)
 scores = list()
 loop = 1
 for train,test in kf:
