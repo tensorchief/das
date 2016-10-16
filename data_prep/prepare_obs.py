@@ -69,7 +69,7 @@ def main(region, threshold=10):
     # get 4-digit region number
     number = get_region_number(region)
     # get corresponding observations
-    obs_time,obs_num = get_obs_data(number,'/scratch/rsb/Test/events_REGEN_24H_10Zug.txt')
+    obs_time,obs_num = get_obs_data(number,'/scratch/rsb/Test/events_REGEN_24H_10.txt')
     # label observations
     obs_labels = get_obs_labels(obs_num,threshold)
     
