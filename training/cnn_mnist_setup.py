@@ -8,6 +8,7 @@ from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
 from sklearn.cross_validation import KFold
+from sklearn.cross_validation import StratifiedKFold
 import tensorflow
 
 import glob
@@ -103,7 +104,7 @@ for train,test in kf:
         
         print('Starting training')
         # Training
-        run_id = 'cnn_mnist_' + str(loop)
+        run_id = 'cnn_mnist_' + str(loop) + '_stratified'
         model.fit({'input': X}, {'target': Y}, n_epoch=100,
                validation_set=({'input': testX}, {'target': testY}),
                snapshot_step=500, show_metric=True, run_id=run_id)
