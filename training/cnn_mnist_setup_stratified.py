@@ -73,9 +73,9 @@ def main(region):
     print("prepared for stratification")
 
     # do k-folds
-    kf = StratifiedKFold(y=y_list,n_folds = 10)
-
-    scores = list()
+    #kf = StratifiedKFold(y=y_list,n_folds = 10)
+    kf = StratifiedShuffleSplit(y_list, n_iter=10, test_size = 0.1)
+    
     loop = 1
     for train,test in kf:
         with tensorflow.Graph().as_default():
@@ -108,7 +108,7 @@ def main(region):
             print('Starting training')
             # Training
             run_id = 'cnn_mnist_' + str(loop) + '_stratified'
-            model.fit({'input': X_train}, {'target': Y_train}, n_epoch=100,
+            model.fit({'input': X_train}, {'target': Y_train}, n_epoch=30,
                    validation_set=({'input': testX}, {'target': testY}),
                    snapshot_step=500, show_metric=True, run_id=run_id)
             
