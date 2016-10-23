@@ -5,7 +5,7 @@ import os
 import glob
 
 datdir = '/scratch/rsb/Test/'
-region = 144
+region = 310
 
 # list all directories with given pattern
 folders = glob.glob(datdir + '*COSMO_E')

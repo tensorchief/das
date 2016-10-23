@@ -5,7 +5,7 @@ import glob
 import os
 import re
 
-region = 310
+region = 144
 
 # list all model runs
 runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
@@ -19,12 +19,13 @@ for run in runs:
     identifier = re.match('.+/([0-9]{8})_COSMO_E',run).group(1)
     
     # check obs labels for missing values
-    obs = np.load(glob.glob(os.path.join(run, 'labels_*_'+str(region)+'.npy'))[0])
-    bench = np.load(glob.glob(os.path.join(run, 'benchmark_'+str(region)+'.npy'))[0])
-    
-    # remove missing time steps
-    indices_delete = list()
     try:
+        obs = np.load(glob.glob(os.path.join(run, 'labels_*_'+str(region)+'.npy'))[0])
+        bench = np.load(glob.glob(os.path.join(run, 'benchmark_'+str(region)+'.npy'))[0])
+        
+        # remove missing time steps
+        indices_delete = list()
+        
         for index,item in enumerate(obs):
             if not np.any(item):
                 # remove invalid timesteps from obs
