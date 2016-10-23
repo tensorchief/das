@@ -110,7 +110,8 @@ def main(region):
             model.fit({'input': X}, {'target': Y}, n_epoch=100,
                    validation_set=({'input': testX}, {'target': testY}),
                    snapshot_step=500, show_metric=True, run_id=run_id)
-           
+            
+            loop += 1 
 
 if __name__ == "__main__":
     # get Region

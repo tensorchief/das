@@ -39,7 +39,7 @@ def remove_adjacent(train, test, runs):
     return set_train, set_test
 
     
-def construct_np_arrays(runs):
+def construct_np_arrays(datdir,runs):
     """
     Numpy files of the runs given are loaded and model/label sets are
     concatenated
@@ -67,7 +67,7 @@ def main(region):
     datdir = '/home/silviar/Dokumente/Training_set/'
     model_files = sorted(glob.glob(datdir + 'training_data_*'+ region + '*'))
 
-    X,y = construct_np_arrays(model_files)
+    X,y = construct_np_arrays(datdir,model_files)
     print("constructed initial arrays")
     y_list = [item[0] for item in y]
     print("prepared for stratification")
@@ -111,6 +111,8 @@ def main(region):
             model.fit({'input': X_train}, {'target': Y_train}, n_epoch=100,
                    validation_set=({'input': testX}, {'target': testY}),
                    snapshot_step=500, show_metric=True, run_id=run_id)
+            
+            loop += 1
            
 if __name__ == "__main__":
     # get Region
