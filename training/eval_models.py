@@ -93,7 +93,7 @@ predicted_label = [item.index(max(item)) for item in pred]
 valid_label = [list(item).index(max(item)) for item in Y]
 
 # do evaluations
-print('ROC/AUC: ',tflearn.objectives.roc_auc_score(predicted_label,valid_label))
+print('ROC/AUC: ',tflearn.objectives.roc_auc_score(pred,valid_label))
 
 # calculate scores
 print('Accuracy: ', accuracy_score(valid_label,predicted_label))
