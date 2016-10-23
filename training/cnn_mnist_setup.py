@@ -65,7 +65,7 @@ def construct_np_arrays(runs):
 def main(region):
     # Data loading & preprocessing
     datdir = '/home/silviar/Dokumente/Training_set/'
-    model_files = sorted(glob.glob(datdir + 'training_data_*' + str(region) +'*.npy'))
+    model_files = sorted(glob.glob(datdir + 'training_data_*' + region +'*.npy'))
 
     # do k-folds
     kf = KFold(len(model_files),n_folds = 10, shuffle = True)
