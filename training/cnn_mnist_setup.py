@@ -11,6 +11,7 @@ from sklearn.cross_validation import KFold
 from sklearn.cross_validation import StratifiedKFold
 import tensorflow
 
+import argparse
 import glob
 import numpy as np
 import re
@@ -61,64 +62,60 @@ def construct_np_arrays(runs):
             
     return model_data_np, labels_np
 
-region = 144
+def main(region):
+    # Data loading & preprocessing
+    datdir = '/home/silviar/Dokumente/Training_set/'
+    model_files = sorted(glob.glob(datdir + 'training_data_*' + str(region) +'*.npy'))
 
-# Data loading & preprocessing
-datdir = '/home/silviar/Dokumente/Training_set/'
-model_files = sorted(glob.glob(datdir + 'training_data_*' + str(region) +'*.npy'))
+    # do k-folds
+    kf = KFold(len(model_files),n_folds = 10, shuffle = True)
+    scores = list()
+    loop = 1
+    for train,test in kf:
+        with tensorflow.Graph().as_default():
+            print('Performing loop ' + str(loop))
+            # remove runs adjacent to test set
+            training_set, test_set = remove_adjacent(train,test,model_files)
 
-# do k-folds
-kf = KFold(len(model_files),n_folds = 10, shuffle = True)
-scores = list()
-loop = 1
-for train,test in kf:
-    with tensorflow.Graph().as_default():
-        print('Performing loop ' + str(loop))
-        # remove runs adjacent to test set
-        training_set, test_set = remove_adjacent(train,test,model_files)
+            # construct np arrays
+            X,Y = construct_np_arrays(training_set)
+            print('done with training set')
 
-        # construct np arrays
-        X,Y = construct_np_arrays(training_set)
-        print('done with training set')
+            testX,testY = construct_np_arrays(test_set)
+            print('done with test set')
 
-        testX,testY = construct_np_arrays(test_set)
-        print('done with test set')
+            print('Building network')
+            # Building convolutional network (e.g. mnist tutorial)
+            network = input_data(shape=[None, 28, 28, 21], name='input')
+            network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
+            network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
+            network = max_pool_2d(network, 2)
 
-        print('Building network')
-        # Building convolutional network (e.g. mnist tutorial)
-        network = input_data(shape=[None, 28, 28, 21], name='input')
-        network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
-        network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
-        network = max_pool_2d(network, 2)
+            network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
+            network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
+            network = max_pool_2d(network, 2)
 
-        network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
-        network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
-        network = max_pool_2d(network, 2)
+            network = fully_connected(network, 128, activation='tanh')
+            network = dropout(network, 0.5)
+            network = fully_connected(network, 256, activation='tanh')
+            network = dropout(network, 0.5)
+            network = fully_connected(network, 2, activation='softmax')
+            network = regression(network, optimizer='adam', learning_rate=0.001,
+                         loss='categorical_crossentropy', name='target')
+            model = tflearn.DNN(network, tensorboard_verbose=0)
+            
+            print('Starting training')
+            # Training
+            run_id = 'cnn_mnist_' + str(loop) + '_stratified'
+            model.fit({'input': X}, {'target': Y}, n_epoch=100,
+                   validation_set=({'input': testX}, {'target': testY}),
+                   snapshot_step=500, show_metric=True, run_id=run_id)
+           
 
-        network = fully_connected(network, 128, activation='tanh')
-        network = dropout(network, 0.5)
-        network = fully_connected(network, 256, activation='tanh')
-        network = dropout(network, 0.5)
-        network = fully_connected(network, 2, activation='softmax')
-        network = regression(network, optimizer='adam', learning_rate=0.001,
-                     loss='categorical_crossentropy', name='target')
-        model = tflearn.DNN(network, tensorboard_verbose=0)
-        
-        print('Starting training')
-        # Training
-        run_id = 'cnn_mnist_' + str(loop) + '_stratified'
-        model.fit({'input': X}, {'target': Y}, n_epoch=100,
-               validation_set=({'input': testX}, {'target': testY}),
-               snapshot_step=500, show_metric=True, run_id=run_id)
-        
-        # crossval scores
-        scores.append(model.evaluate(testX,testY))
-        loop += 1
-        
-        # model.predict ...
-        # roc
-"""
-plt.figure()
-plt.plot(scores)
-plt.show()
-"""	
+if __name__ == "__main__":
+    # get Region
+    p = argparse.ArgumentParser()
+    p.add_argument("region")
+    args = p.parse_args()
+
+    main(int(args.region)) 
