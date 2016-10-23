@@ -7,9 +7,7 @@ from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
-#from sklearn.cross_validation import StratifiedKFold
 import tensorflow
-from sklearn.cross_validation import train_test_split
 from sklearn.cross_validation import StratifiedShuffleSplit
 
 import argparse
@@ -87,7 +85,7 @@ def main(region):
         
         print('Starting training')
         # Training
-        run_id = 'cnn_mnist_stratified'
+        run_id = 'cnn_mnist_stratified_' + str(region)
         model.fit({'input': X_train}, {'target': Y_train}, n_epoch=100,
                validation_set=({'input': testX}, {'target': testY}),
                snapshot_step=500, show_metric=True, run_id=run_id)
