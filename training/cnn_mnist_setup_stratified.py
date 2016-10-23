@@ -65,7 +65,7 @@ def main(region):
 
     # Data loading & preprocessing
     datdir = '/home/silviar/Dokumente/Training_set/'
-    model_files = sorted(glob.glob(datdir + 'training_data_*'+ region + '*'))
+    model_files = sorted(glob.glob(datdir + 'training_data_*'+ str(region) + '*'))
 
     X,y = construct_np_arrays(datdir,model_files)
     print("constructed initial arrays")
