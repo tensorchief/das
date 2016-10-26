@@ -1,2 +1,0 @@
-model_checkpoint_path: "cnn_mnist_stratified_310"
-all_model_checkpoint_paths: "cnn_mnist_stratified_310"
