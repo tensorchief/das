@@ -16,6 +16,7 @@ import argparse
 import glob
 import numpy as np
 import re
+import itertools
 #import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -77,6 +78,41 @@ def setup_cnn():
                  loss='categorical_crossentropy', name='target')
     return tflearn.DNN(network, tensorboard_verbose=0)
 
+
+ 
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes)
+    plt.yticks(tick_marks, classes)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    thresh = 0.75*cm.max()
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
 def main(region):
 
     # Data loading & preprocessing
@@ -93,10 +129,11 @@ def main(region):
 
     # do predictions
     pred = model.predict(X)
-    predicted_label = [item.index(max(item)) for item in pred]
-    valid_label = [item.argmax() for item in Y]
     y_score = np.array(pred)
-
+    predicted_label = [round(item) for item in y_score[:,0]]
+    valid_label = [item for item in Y[:,0]]
+    print(valid_label)
+    
     # calculate scores
     print('Accuracy: ', accuracy_score(valid_label,predicted_label))
     print('Confusion matrix: ', confusion_matrix(valid_label,predicted_label))
@@ -135,6 +172,15 @@ def main(region):
     plt.title('ROC curve for region ' + str(region))
     plt.legend(loc='lower right')
     plt.savefig(outdir + 'roc_' + str(region) + '.png')
+
+    cm = confusion_matrix(valid_label,predicted_label,labels=[1,0])
+    plt.figure()
+    plot_confusion_matrix(cm,['p>=10mm','p<10mm'],normalize=True,title='Normalized confusion matrix')
+    plt.savefig(outdir + 'confusion_matrix_norm_' + str(region) + '.png')
+
+    plt.figure()
+    plot_confusion_matrix(cm,['p>=10mm','p<10mm'])
+    plt.savefig(outdir + 'confusion_matrix_' + str(region) + '.png')
 
 if __name__ == "__main__":
     # get Region
