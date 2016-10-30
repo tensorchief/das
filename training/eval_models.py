@@ -2,6 +2,8 @@
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve, auc
 
 import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
@@ -13,6 +15,8 @@ import tensorflow
 import glob
 import numpy as np
 import re
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def construct_np_arrays(runs):
@@ -91,11 +95,30 @@ model.load('/home/silviar/Dokumente/Abschlussarbeit/training/models/' \
 pred = model.predict(X)
 predicted_label = [item.index(max(item)) for item in pred]
 valid_label = [list(item).index(max(item)) for item in Y]
+y_score = np.array(pred)
 
 # do evaluations
-print('ROC/AUC: ',tflearn.objectives.roc_auc_score(pred,valid_label))
+#print('ROC/AUC: ',tflearn.objectives.roc_auc_score(pred,valid_label))
+print('ROC/AUC: ',roc_auc_score(valid_label,predicted_label))
 
 # calculate scores
 print('Accuracy: ', accuracy_score(valid_label,predicted_label))
 print('Confusion matrix: ', confusion_matrix(valid_label,predicted_label))
 
+# calculate roc curve
+fpr = list()
+tpr = list()
+fpr, tpr, _ = roc_curve(Y.ravel(),y_score.ravel())
+roc_auc = auc(fpr,tpr)
+
+plt.figure()
+plt.plot(fpr,tpr, color = 'deeppink', lw = 2, label = 'ROC curve (area = %0.2f)'\
+        % roc_auc)
+plt.plot([0,1],[0,1], color = 'navy', lw = 2, linestyle = '--')
+plt.xlim([0.0,1.0])
+plt.ylim([0.0,1.0])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC curve for region ' + str(region))
+plt.legend(loc='lower right')
+plt.show()
