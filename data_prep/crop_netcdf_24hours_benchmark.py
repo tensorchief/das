@@ -180,7 +180,9 @@ def main(chunk, threshold=10):
 
             # check if probability exceeds critical probability
             events = [item for item in class_all if item == 1]
-            label = [1,0] if len(events)/float(len(class_all)) >= prob_crit else [0,1]
+            #label = [1,0] if len(events)/float(len(class_all)) >= prob_crit else [0,1]
+            frac = len(events)/float(len(class_all))
+            label = [frac,1-frac]
 
             # collect labels
             prec_all = np.vstack((prec_all,label))
@@ -189,7 +191,7 @@ def main(chunk, threshold=10):
                 logfile.write('done with ' + timestep + '\n')
 
         # Write to file
-        np.save(os.path.join(run,'benchmark_' + str(region) + '.npy'),prec_all)
+        np.save(os.path.join(run,'benchmark_prob_' + str(region) + '.npy'),prec_all)
         
         with open('log'+str(chunk)+'.txt','a') as logfile:
             logfile.write('done with ' + run + '\n')
