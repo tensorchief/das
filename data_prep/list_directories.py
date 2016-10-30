@@ -6,6 +6,12 @@ datdir = '/scratch/rsb/Test/'
 
 runs = glob.glob(datdir + '*COSMO_E')
 
-with open('datlist.txt','w') as outfile:
+with open('training_set.txt') as infile:
+    training = infile.readlines()
+
+training_set = [item.strip() for item in training]
+
+with open('test_set.txt','w') as outfile:
     for run in runs:
-        outfile.write(str(run) + '\n')
+        if run not in training_set:
+            outfile.write(str(run) + '\n')

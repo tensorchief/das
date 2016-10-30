@@ -137,9 +137,9 @@ def main(chunk, threshold=10):
 
     # get all runs
     #runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
-    with open('ls.txt','r') as infile:
+    with open('test_set.txt','r') as infile:
         runs = infile.read().split('\n')
-    num_chunks = 1
+    num_chunks = 20
     ids = math.ceil(len(runs)/num_chunks)
     chunks = [runs[i:i+ids] for i in range(0,len(runs),ids)]
     

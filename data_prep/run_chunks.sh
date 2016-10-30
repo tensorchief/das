@@ -1,6 +1,6 @@
 #!/usr/local/bin/sh
 
-for i in $(seq 0 9)
+for i in $(seq 0 19)
 do
 	#echo "$i"
     batchPP -t 16 ./crop_netcdf_24hours_benchmark.py $i
