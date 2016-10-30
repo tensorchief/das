@@ -81,7 +81,7 @@ def main(region):
         network = fully_connected(network, 2, activation='softmax')
         network = regression(network, optimizer='adam', learning_rate=0.001,
                      loss='categorical_crossentropy', name='target')
-        model = tflearn.DNN(network, tensorboard_verbose=0)
+        model = tflearn.DNN(network, tensorboard_verbose=3)
         
         print('Starting training')
         # Training
