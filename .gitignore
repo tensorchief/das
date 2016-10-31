@@ -4,7 +4,8 @@
 *.ptx
 *.cubin
 *.fatbin
-*.txt
+log*.txt
+data_prep/*.txt
 Archive/
 script_*
 stdeo_*
