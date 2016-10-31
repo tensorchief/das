@@ -2,6 +2,7 @@
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve, auc
 
@@ -17,8 +18,6 @@ import glob
 import numpy as np
 import re
 import itertools
-#import matplotlib
-#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def construct_np_arrays(datdir, runs, model_data_np):
@@ -62,11 +61,9 @@ def setup_cnn():
     """
     network = input_data(shape=[None, 28, 28, 21], name='input')
     network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
-    #network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
     network = max_pool_2d(network, 2)
 
     network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
-    #network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
     network = max_pool_2d(network, 2)
 
     network = fully_connected(network, 128, activation='tanh')
@@ -87,6 +84,7 @@ def plot_confusion_matrix(cm, classes,
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
+    Adapted from http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
     """
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -103,7 +101,7 @@ def plot_confusion_matrix(cm, classes,
 
     print(cm)
 
-    thresh = 0.75*cm.max()
+    thresh = 0.85*cm.max()
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         plt.text(j, i, cm[i, j],
                  horizontalalignment="center",
@@ -112,6 +110,23 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+
+def calculate_scores(valid_y, pred_y, valid_Y_np, pred_prob):
+    """
+    Calculates Accuracy, Confusion matrix, classification report and roc/auc
+    :param valid_y: true label (as a 1D-list)
+    :param pred_y: predicted label (as a 1D-list)
+    :param valid_Y_np: true label (as a 1-D numpy array)
+    :param pred_prob: predicted probability (as a 1-D numpy array)
+    :return: false positive rate, true positive rate, area under curve
+    """
+    print('Accuracy: ', accuracy_score(valid_y,pred_y))
+    print('Confusion matrix: ', confusion_matrix(valid_y,pred_y))
+    print(classification_report(valid_y,pred_y,target_names = ['p<10mm','p>=10mm']))
+    
+    fpr, tpr, _ = roc_curve(valid_Y_np,pred_prob)
+    return fpr, tpr, auc(fpr,tpr)
+
 
 def main(region):
 
@@ -132,55 +147,58 @@ def main(region):
     y_score = np.array(pred)
     predicted_label = [round(item) for item in y_score[:,0]]
     valid_label = [item for item in Y[:,0]]
-    print(valid_label)
     
+    print('***** CNN *****')
     # calculate scores
-    print('Accuracy: ', accuracy_score(valid_label,predicted_label))
-    print('Confusion matrix: ', confusion_matrix(valid_label,predicted_label))
+    fpr, tpr, roc_auc = calculate_scores(valid_label, predicted_label,\
+                                        Y[:,0], y_score[:,0])
 
-    # calculate roc curve
-    fpr, tpr, _ = roc_curve(Y[:,0],y_score[:,0])
-    roc_auc = auc(fpr,tpr)
-
-    """
     # get benchmark
     benchmark_files = sorted(glob.glob(datdir + 'benchmark_prob_*'))
     pred_bench,Y_bench = construct_np_arrays(datdir,benchmark_files,np.empty((0,2),int))
-    predicted_label_bench = [item.argmax() for item in pred_bench]
-    valid_label_bench = [item.argmax() for item in Y_bench]
+    predicted_label_bench = [round(item) for item in pred_bench[:,0]]
+    valid_label_bench = [item for item in Y_bench[:,0]]
 
+    print('***** BENCHMARK *****')
     # calculate scores
-    print('Accuracy: ', accuracy_score(valid_label_bench,predicted_label_bench))
-    print('Confusion matrix: ', confusion_matrix(valid_label_bench,predicted_label_bench))
+    fpr_bench, tpr_bench, roc_auc_bench = calculate_scores(valid_label_bench,\
+                                         predicted_label_bench, Y_bench[:,0], pred_bench[:,0])
 
-    # calculate roc_curve
-    fpr_bench, tpr_bench, _ = roc_curve(Y_bench[:,0],pred_bench[:,0])
-    roc_auc_bench = auc(fpr_bench,tpr_bench)
-    """
-
+    # plot roc curves
     outdir = '/home/silviar/Dokumente/Abschlussarbeit/training/models/'
     plt.figure()
-    plt.plot(fpr,tpr, color = 'deeppink', lw = 2, label = 'class 1 (area = %0.2f)'\
+    plt.plot(fpr,tpr, color = 'deeppink', lw = 2, label = 'CNN (area = %0.2f)'\
             % roc_auc)
-    #plt.plot(fpr_bench,tpr_bench, color = 'purple', lw = 2, \
-    #        label = 'Benchmark (area = %0.2f)' % roc_auc_bench)
+    plt.plot(fpr_bench,tpr_bench, color = 'purple', lw = 2, \
+            label = 'COSMO-E (area = %0.2f)' % roc_auc_bench)
     plt.plot([0,1],[0,1], color = 'navy', lw = 2, linestyle = '--')
     plt.xlim([0.0,1.0])
     plt.ylim([0.0,1.0])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title('ROC curve for region ' + str(region))
+    plt.title('ROC curve $P(p \geq 10mm)$, region ' + str(region))
     plt.legend(loc='lower right')
     plt.savefig(outdir + 'roc_' + str(region) + '.png')
 
+    # plot confusion matrices
     cm = confusion_matrix(valid_label,predicted_label,labels=[1,0])
     plt.figure()
-    plot_confusion_matrix(cm,['p>=10mm','p<10mm'],normalize=True,title='Normalized confusion matrix')
+    plot_confusion_matrix(cm,['$p \geq 10mm$','$p < 10mm$'],normalize=True,title='Normalized confusion matrix')
     plt.savefig(outdir + 'confusion_matrix_norm_' + str(region) + '.png')
 
     plt.figure()
-    plot_confusion_matrix(cm,['p>=10mm','p<10mm'])
+    plot_confusion_matrix(cm,['$p \geq 10mm$','$p < 10mm$'])
     plt.savefig(outdir + 'confusion_matrix_' + str(region) + '.png')
+
+    cm = confusion_matrix(valid_label_bench,predicted_label_bench,labels=[1,0])
+    plt.figure()
+    plot_confusion_matrix(cm,['$p \geq 10mm$','$p < 10mm$'],normalize=True,title='Normalized confusion matrix')
+    plt.savefig(outdir + 'benchmark_confusion_matrix_norm_' + str(region) + '.png')
+
+    plt.figure()
+    plot_confusion_matrix(cm,['$p \geq 10mm$','$p < 10mm$'])
+    plt.savefig(outdir + 'benchmark_confusion_matrix_' + str(region) + '.png')
+
 
 if __name__ == "__main__":
     # get Region
