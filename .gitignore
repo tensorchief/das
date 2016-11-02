@@ -14,3 +14,4 @@ documentation/
 fieldextra_nl
 training/models/cnn_*
 training/models/checkpoint*
+training/models/*_test.png
