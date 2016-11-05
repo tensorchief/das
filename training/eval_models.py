@@ -131,8 +131,13 @@ def calculate_scores(valid_y, pred_y, valid_Y_np, pred_prob):
 def main(region):
 
     # Data loading & preprocessing
-    datdir = '/home/silviar/Dokumente/Test_set/'
-    test_files = sorted(glob.glob(datdir + 'training_data_*_' + str(region) + '.npy'))
+    datdir = '/home/silviar/Dokumente/Training_set/'
+    with open('../data_prep/test_set.txt', 'r') as infile:
+        rundirs = infile.readlines()
+    runs = [re.match('.*([0-9]{8}).*',item).group(1) for item in rundirs]
+    test_files = [item for item in \
+                    sorted(glob.glob(datdir + 'training_data_*'+ str(region) + '*'))\
+                    if re.match('.*([0-9]{8}).*',item).group(1) in runs]
 
     X,Y = construct_np_arrays(datdir,test_files,np.empty((0,28,28,21),int))
 
@@ -152,7 +157,16 @@ def main(region):
     # calculate scores
     fpr, tpr, roc_auc = calculate_scores(valid_label, predicted_label,\
                                         Y[:,0], y_score[:,0])
-
+    
+    # bootstrap to get standard deviation of auc score
+    test_indices = np.random.choice(len(predicted_label),(1000,50),replace=True)
+    auc_list = list()
+    for index in test_indices:
+        fpr_tmp, tpr_tmp, _ = roc_curve(Y[index,0],y_score[index,0])
+        auc_list.append(auc(fpr_tmp,tpr_tmp))
+    print("Mean AUC: ", np.nanmean(auc_list))
+    print("Std. Deviation: ", np.nanstd(auc_list))
+        
     # get benchmark
     benchmark_files = sorted(glob.glob(datdir + 'benchmark_prob_*_' + str(region) + '.npy'))
     pred_bench,Y_bench = construct_np_arrays(datdir,benchmark_files,np.empty((0,2),int))

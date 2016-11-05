@@ -1,21 +1,37 @@
+hdf5 not supported (please install/reinstall h5py)
 ***** CNN *****
-('Accuracy: ', 0.90256079884039297)
-('Confusion matrix: ', array([[5026,  387],
-       [ 218,  578]]))
+('Accuracy: ', 0.91675990154396958)
+('Confusion matrix: ', array([[3737,  148],
+       [ 224,  360]]))
              precision    recall  f1-score   support
 
-     p<10mm       0.96      0.93      0.94      5413
-    p>=10mm       0.60      0.73      0.66       796
+     p<10mm       0.94      0.96      0.95      3885
+    p>=10mm       0.71      0.62      0.66       584
 
-avg / total       0.91      0.90      0.91      6209
+avg / total       0.91      0.92      0.91      4469
 
+('Mean AUC: ', 0.92163521574001861)
+('Std. Deviation: ', 0.067941255007965898)
 ***** BENCHMARK *****
-('Accuracy: ', 0.88951521984216464)
-('Confusion matrix: ', array([[4907,  506],
-       [ 180,  616]]))
+('Accuracy: ', 0.90024456171965506)
+('Confusion matrix: ', array([[6473,  530],
+       [ 245,  521]]))
              precision    recall  f1-score   support
 
-     p<10mm       0.96      0.91      0.93      5413
-    p>=10mm       0.55      0.77      0.64       796
+     p<10mm       0.96      0.92      0.94      7003
+    p>=10mm       0.50      0.68      0.57       766
 
-avg / total       0.91      0.89      0.90      6209
+avg / total       0.92      0.90      0.91      7769
+
+Normalized confusion matrix
+[[ 0.61643836  0.38356164]
+ [ 0.03809524  0.96190476]]
+Confusion matrix, without normalization
+[[ 360  224]
+ [ 148 3737]]
+Normalized confusion matrix
+[[ 0.68015666  0.31984334]
+ [ 0.07568185  0.92431815]]
+Confusion matrix, without normalization
+[[ 521  245]
+ [ 530 6473]]
