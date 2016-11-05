@@ -5,7 +5,7 @@ from sklearn.cross_validation import train_test_split
 with open('datlist.txt','r') as infile:
 	runs = sorted(infile.readlines())
 
-train, test = train_test_split(runs, test_size = 0.1)
+train, test = train_test_split(runs, test_size = 0.2)
 
 deleted = list()
 for index,item in enumerate(sorted(runs)):
@@ -23,3 +23,7 @@ for index,item in enumerate(sorted(runs)):
 with open('training_set.txt', 'w') as outfile:
 	for item in sorted(train):
 		outfile.write(item)
+
+with open('test_set.txt','w') as outfile:
+    for item in sorted(test):
+        outfile.write(item)
