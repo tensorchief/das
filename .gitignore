@@ -12,7 +12,7 @@ stdeo_*
 .DS_Store
 documentation/
 fieldextra_nl
-training/models/cnn_*
+training/models/initial/cnn_*
 training/models/checkpoint*
 data_prep/*.nc
 training/models/*_test.png
