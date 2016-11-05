@@ -5,12 +5,14 @@ import glob
 import os
 import re
 
-region = 310
+region = 144
 
 # list all model runs
-runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
+#runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
 #runs = ['/scratch/rsb/Test/14111912_COSMO_E']
-
+with open('post.txt','r') as infile:
+    runs = infile.read().split('\n')
+print(runs)
 # go through each model run
 for run in runs:
     with open('log.txt','a') as logfile:

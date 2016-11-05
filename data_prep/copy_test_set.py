@@ -11,16 +11,18 @@ p.add_argument("region")
 args = p.parse_args()
 region = args.region
 
-with open('training_set.txt', 'r') as infile:
+#with open('training_set.txt', 'r') as infile:
+#    training_data = infile.readlines()
+with open('post.txt','r') as infile:
     training_data = infile.readlines()
-
 training_runs = [item.strip() for item in training_data]
 
 all_runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
 destination = '/users/rsb/Test_set/'
 
 for run in all_runs:
-    if run not in training_runs:
+    #if run not in training_runs:
+    if run in training_runs:
         files = glob.glob(run.strip() + '/training_*' + str(region) + '*.npy')
         for item in files:
             print(item)

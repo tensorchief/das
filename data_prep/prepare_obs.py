@@ -69,14 +69,17 @@ def main(region, threshold=10):
     # get 4-digit region number
     number = get_region_number(region)
     # get corresponding observations
-    obs_time,obs_num = get_obs_data(number,'/scratch/rsb/Test/events_REGEN_24H_10.txt')
+    obs_time,obs_num = get_obs_data(number,'/scratch/rsb/Test/events_REGEN_24H.txt')
     # label observations
     obs_labels = get_obs_labels(obs_num,threshold)
     
 
     # assign labels to model runs
     #model_runs = ['/scratch/rsb/Test/15030512_COSMO_E/']
-    model_runs = glob.glob('/scratch/rsb/Test/*_COSMO_E')
+    #model_runs = glob.glob('/scratch/rsb/Test/*_COSMO_E')
+    with open('post.txt','r') as infile:
+        model_runs = infile.read().split('\n')
+
     for run in model_runs:
         tensors = sorted(glob.glob(run + '/tensor*'+str(region)+'.npy'))
         mod_ini = datetime.strptime(re.match('.+/([0-9]{8})_COSMO_E', run).group(1),'%y%m%d%H')

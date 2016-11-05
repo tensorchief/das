@@ -5,7 +5,10 @@ import glob
 datdir = '/scratch/rsb/Test/'
 
 runs = glob.glob(datdir + '*COSMO_E')
+for item in sorted(runs):
+    print(item)
 
+"""
 with open('training_set.txt') as infile:
     training = infile.readlines()
 
@@ -15,3 +18,4 @@ with open('test_set.txt','w') as outfile:
     for run in runs:
         if run not in training_set:
             outfile.write(str(run) + '\n')
+"""

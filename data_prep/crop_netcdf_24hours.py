@@ -110,7 +110,7 @@ def main(chunk, threshold=10):
     :return:
     """
     region = 310
-    num_chunks = 15
+    num_chunks = 10
     centroid = get_centroid(region)
 
     # build member paths
@@ -131,9 +131,9 @@ def main(chunk, threshold=10):
     cur_col = index % len(lon[0])
 
     # get all runs
-    runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
-    #with open('ls.txt','r') as infile:
-    #    runs = infile.read().split('\n')
+    #runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
+    with open('post.txt','r') as infile:
+        runs = infile.read().split('\n')
     ids = math.ceil(len(runs)/num_chunks)
     chunks = [runs[i:i+ids] for i in range(0,len(runs),ids)]
     
@@ -175,9 +175,9 @@ def main(chunk, threshold=10):
                 
             # Write to file
             np.save(os.path.join(run,'tensor_' + timestep + '_' + str(region) + '.npy'),prec_all)
-            with open('log'+str(chunk)+'.txt','a') as logfile:
+            with open('log'+str(chunk)+'_' +str(region) + '.txt','a') as logfile:
                 logfile.write('done with ' + timestep + '\n')
-        with open('log'+str(chunk)+'.txt','a') as logfile:
+        with open('log'+str(chunk)+'_' +str(region) + '.txt','a') as logfile:
             logfile.write('done with ' + run + '\n')
 
     # /TODO: get corresponding training labels

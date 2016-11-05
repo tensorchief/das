@@ -137,9 +137,9 @@ def main(chunk, threshold=10):
 
     # get all runs
     #runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
-    with open('test_set.txt','r') as infile:
+    with open('post.txt','r') as infile:
         runs = infile.read().split('\n')
-    num_chunks = 20
+    num_chunks = 10
     ids = math.ceil(len(runs)/num_chunks)
     chunks = [runs[i:i+ids] for i in range(0,len(runs),ids)]
     
@@ -187,13 +187,13 @@ def main(chunk, threshold=10):
             # collect labels
             prec_all = np.vstack((prec_all,label))
             
-            with open('log'+str(chunk)+'.txt','a') as logfile:
+            with open('log'+str(chunk)+'_' +str(region) + '_bench.txt','a') as logfile:
                 logfile.write('done with ' + timestep + '\n')
 
         # Write to file
         np.save(os.path.join(run,'benchmark_prob_' + str(region) + '.npy'),prec_all)
         
-        with open('log'+str(chunk)+'.txt','a') as logfile:
+        with open('log'+str(chunk)+'_' +str(region) + '_bench.txt','a') as logfile:
             logfile.write('done with ' + run + '\n')
 
     print('done')

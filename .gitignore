@@ -13,3 +13,4 @@ documentation/
 fieldextra_nl
 training/models/cnn_*
 training/models/checkpoint*
+data_prep/*.nc
