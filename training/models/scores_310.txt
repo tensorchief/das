@@ -1,0 +1,21 @@
+***** CNN *****
+('Accuracy: ', 0.90256079884039297)
+('Confusion matrix: ', array([[5026,  387],
+       [ 218,  578]]))
+             precision    recall  f1-score   support
+
+     p<10mm       0.96      0.93      0.94      5413
+    p>=10mm       0.60      0.73      0.66       796
+
+avg / total       0.91      0.90      0.91      6209
+
+***** BENCHMARK *****
+('Accuracy: ', 0.88951521984216464)
+('Confusion matrix: ', array([[4907,  506],
+       [ 180,  616]]))
+             precision    recall  f1-score   support
+
+     p<10mm       0.96      0.91      0.93      5413
+    p>=10mm       0.55      0.77      0.64       796
+
+avg / total       0.91      0.89      0.90      6209

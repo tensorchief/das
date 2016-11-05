@@ -4,7 +4,8 @@
 *.ptx
 *.cubin
 *.fatbin
-*.txt
+log*.txt
+data_prep/*.txt
 Archive/
 script_*
 stdeo_*
@@ -14,3 +15,4 @@ fieldextra_nl
 training/models/cnn_*
 training/models/checkpoint*
 data_prep/*.nc
+training/models/*_test.png
