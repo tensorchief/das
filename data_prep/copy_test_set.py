@@ -13,12 +13,12 @@ region = args.region
 
 #with open('training_set.txt', 'r') as infile:
 #    training_data = infile.readlines()
-with open('post.txt','r') as infile:
+with open('test_set.txt','r') as infile:
     training_data = infile.readlines()
 training_runs = [item.strip() for item in training_data]
 
 all_runs = glob.glob('/scratch/rsb/Test/*COSMO_E')
-destination = '/users/rsb/Test_set/'
+destination = '/users/rsb/Training_set/'
 
 for run in all_runs:
     #if run not in training_runs:
