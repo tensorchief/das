@@ -43,7 +43,13 @@ def main(region):
 
     # Data loading & preprocessing
     datdir = '/home/silviar/Dokumente/Training_set/'
-    model_files = sorted(glob.glob(datdir + 'training_data_*'+ str(region) + '*'))
+    with open('../data_prep/training_set.txt', 'r') as infile:
+        rundirs = infile.readlines()
+    runs = [re.match('.*([0-9]{8}).*',item).group(1) for item in rundirs]
+    model_files = [item for item in \
+                    sorted(glob.glob(datdir + 'training_data_*'+ str(region) + '*'))\
+                    if re.match('.*([0-9]{8}).*',item).group(1) in runs]
+    print(len(model_files))
 
     X,y = construct_np_arrays(datdir,model_files)
     print("constructed initial arrays")
@@ -54,7 +60,6 @@ def main(region):
     print(y.shape)
     print(len(y_list))
     # split into training & validation set
-    
     indices = StratifiedShuffleSplit(y_list, n_iter=1, test_size = 0.1)
     
     for train,test in indices:
@@ -67,11 +72,9 @@ def main(region):
         # Building convolutional network (e.g. mnist tutorial)
         network = input_data(shape=[None, 28, 28, 21], name='input')
         network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
-        #network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
         network = max_pool_2d(network, 2)
 
         network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
-        #network = conv_2d(network, 64, 3, activation='relu', regularizer="L2")
         network = max_pool_2d(network, 2)
 
         network = fully_connected(network, 128, activation='tanh')
@@ -81,12 +84,12 @@ def main(region):
         network = fully_connected(network, 2, activation='softmax')
         network = regression(network, optimizer='adam', learning_rate=0.001,
                      loss='categorical_crossentropy', name='target')
-        model = tflearn.DNN(network, tensorboard_verbose=3)
+        model = tflearn.DNN(network, tensorboard_verbose=0)
         
         print('Starting training')
         # Training
         run_id = 'cnn_mnist_stratified_' + str(region)
-        model.fit({'input': X_train}, {'target': Y_train}, n_epoch=100,
+        model.fit({'input': X_train}, {'target': Y_train}, n_epoch=30,
                validation_set=({'input': testX}, {'target': testY}),
                snapshot_step=500, show_metric=True, run_id=run_id)
           
