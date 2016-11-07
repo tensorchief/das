@@ -110,6 +110,7 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    plt.tight_layout()
 
 def calculate_scores(valid_y, pred_y, valid_Y_np, pred_prob):
     """
@@ -151,7 +152,7 @@ def main(region):
     pred = model.predict(X)
     y_score = np.array(pred)
     predicted_label = [round(item) for item in y_score[:,0]]
-    valid_label = [item for item in Y[:,0]]
+    valid_label = [item for item in Y[:,0]]    
     
     print('***** CNN *****')
     # calculate scores
@@ -168,16 +169,23 @@ def main(region):
     print("Std. Deviation: ", np.nanstd(auc_list))
         
     # get benchmark
-    benchmark_files = sorted(glob.glob(datdir + 'benchmark_prob_*_' + str(region) + '.npy'))
+    benchmark_files = [item for item in \
+                    sorted(glob.glob(datdir + 'benchmark_prob_*'+ str(region) + '*'))\
+                    if re.match('.*([0-9]{8}).*',item).group(1) in runs]
+    print(len(benchmark_files), len(test_files))
     pred_bench,Y_bench = construct_np_arrays(datdir,benchmark_files,np.empty((0,2),int))
     predicted_label_bench = [round(item) for item in pred_bench[:,0]]
     valid_label_bench = [item for item in Y_bench[:,0]]
 
+    crit = 0.4 if region == 144 else 0.7
+    autowarn_label = np.array([1 if item >= crit else 0 for item in pred_bench[:,0]])   
+    
     print('***** BENCHMARK *****')
     # calculate scores
     fpr_bench, tpr_bench, roc_auc_bench = calculate_scores(valid_label_bench,\
                                          predicted_label_bench, Y_bench[:,0], pred_bench[:,0])
-
+    fpr_auto, tpr_auto, _ = roc_curve(Y_bench[:,0],autowarn_label)
+    
     # plot roc curves
     outdir = '/home/silviar/Dokumente/Abschlussarbeit/training/models/'
     plt.figure()
@@ -185,6 +193,10 @@ def main(region):
             % roc_auc)
     plt.plot(fpr_bench,tpr_bench, color = 'purple', lw = 2, \
             label = 'COSMO-E (area = %0.2f)' % roc_auc_bench)
+    # plot autowarn default
+    plt.plot(fpr_auto[1],tpr_auto[1],'o',color = 'purple', label = 'default')
+    
+    # add diagonal
     plt.plot([0,1],[0,1], color = 'navy', lw = 2, linestyle = '--')
     plt.xlim([0.0,1.0])
     plt.ylim([0.0,1.0])
