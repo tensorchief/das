@@ -3,6 +3,7 @@
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve, auc
 
@@ -153,7 +154,7 @@ def main(region):
     y_score = np.array(pred)
     predicted_label = [round(item) for item in y_score[:,0]]
     valid_label = [item for item in Y[:,0]]    
-    
+
     print('***** CNN *****')
     # calculate scores
     fpr, tpr, roc_auc = calculate_scores(valid_label, predicted_label,\
@@ -161,13 +162,27 @@ def main(region):
     
     # bootstrap to get standard deviation of auc score
     test_indices = np.random.choice(len(predicted_label),(1000,50),replace=True)
-    auc_list = list()
+    auc_list = list(); precision_list = list(); recall_list = list()
+    fscore_pos_list = list();fscore_tot_list = list()
     for index in test_indices:
         fpr_tmp, tpr_tmp, _ = roc_curve(Y[index,0],y_score[index,0])
         auc_list.append(auc(fpr_tmp,tpr_tmp))
-    print("Mean AUC: ", np.nanmean(auc_list))
-    print("Std. Deviation: ", np.nanstd(auc_list))
-        
+        output = classification_report([item for item in Y[index,0]],
+                                        [round(item) for item in y_score[index,0]],
+                                        target_names = ['p<10mm','p>=10mm']).split('\n')
+        precision_list.append(float(output[3].split()[1].strip()))
+        recall_list.append(float(output[3].split()[2].strip()))
+        fscore_pos_tmp = float(output[3].split()[3].strip())    
+        fscore_neg_tmp = float(output[2].split()[3].strip())
+        fscore_pos_list.append(fscore_pos_tmp)
+        fscore_tot_list.append((fscore_pos_tmp + fscore_neg_tmp)/2)
+    
+    print("-, AUC, Precision, Recall, F1, F_tot")
+    print("Mean: ", np.nanmean(auc_list), np.nanmean(precision_list),np.nanmean(recall_list),
+            np.nanmean(fscore_pos_list), np.nanmean(fscore_tot_list))
+    print("Std. Deviation: ", np.nanstd(auc_list),np.nanstd(precision_list),np.nanstd(recall_list), 
+            np.nanstd(fscore_pos_list), np.nanstd(fscore_tot_list))
+    
     # get benchmark
     benchmark_files = [item for item in \
                     sorted(glob.glob(datdir + 'benchmark_prob_*'+ str(region) + '*'))\
@@ -186,7 +201,7 @@ def main(region):
                                          predicted_label_bench, Y_bench[:,0], pred_bench[:,0])
     fpr_auto, tpr_auto, _ = roc_curve(Y_bench[:,0],autowarn_label)
     
-    # plot roc curves
+
     outdir = '/home/silviar/Dokumente/Abschlussarbeit/training/models/'
     plt.figure()
     plt.plot(fpr,tpr, color = 'deeppink', lw = 2, label = 'CNN (area = %0.2f)'\
