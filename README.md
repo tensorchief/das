@@ -1,4 +1,6 @@
 # das
+A CNN is trained to predict whether or not precipitation will exceed 10mm/24h in three regions of Switzerland based on simulations of the numerical weather prediction model COSMO-E.
+
 
 ## data_prep
 Contains all Scripts relevant for data preparation.
@@ -35,10 +37,13 @@ Contains all Scripts relevant for data preparation.
 ## training
 Contains all scripts relevant for training & evaluation
 
-* [cnn_mnist_setup.py](./training/cnn_mnist_setup.py) *Performs 10-fold crossvalidation by training cnn with a setup inspired by LeNet-5 to predict precipitation events. Removes model runs from training set that neighbour validation set.*
+* [cnn_mnist_setup.py](./training/cnn_mnist_setup.py) *Performs 10-fold crossvalidation by training cnn with a setup inspired by LeNet-5 to predict precipitation events. Samling is done by a random train_test_split*
 
 * [cnn_mnist_setup_stratified.py](./training/cnn_mnist_setup_stratified.py) *Preforms 10-fold crossvalidation by training cnn with a setup inspired by LeNet-5. Due to inbalanced data set, sampling is stratified, without omitting neighbouring model runs*
 
-* [eval_benchmark.py](./training/eval_benchmark.py) *Calculates scores of the benchmark prediction method.*
+* [train_cnn.py](./training/train.cnn) *Trains cnn without crossvalidation using stratified sampling to separate training and validation set.*
 
+* [eval_models.py](./training/eval_models) *Calculates evaluation scores, plots confusion matrices and roc curves*
+
+* [eval_sensitivity.py](./training/eval_sensitivity.py) *Checks how sensitive selected regions are to manipulation of the input data by successively setting 7x7 areas of the input tensors to 0. Results are plotted in histograms.*
 
