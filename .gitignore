@@ -17,3 +17,4 @@ training/models/initial/cnn_*
 training/models/checkpoint*
 data_prep/*.nc
 training/models/*_test.png
+training/models/renamed_model/*

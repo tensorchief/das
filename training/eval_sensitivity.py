@@ -132,7 +132,7 @@ def main(region):
         plt.title("P(p>10mm)* - P(p>10mm); " + key)
         cur_text = 'Mean = ' + str(np.mean(diff_labels[key])) + '\nStd = ' + str(np.std(diff_labels[key]))
         plt.text(0.99,0.99,cur_text,horizontalalignment='right',verticalalignment='top',transform=plt.gca().transAxes)
-        plt.savefig(outdir + 'sensitivity_' + str(index) + '.png')
+        plt.savefig(outdir + 'sensitivity_'+'_'+str(region) + str(index) + '.png')
 
 if __name__ == "__main__":
     # get Region
