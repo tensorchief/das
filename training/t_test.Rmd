@@ -1,0 +1,159 @@
+---
+title: "Score Evaluation with t-tests"
+author: "tensorchief"
+date: "27 November 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Region 144
+
+Loading data from 1000 bootstrap experiments where a sample of 50 was picked from the test set to calculate AUC, precision, recall, F1-score and the overall F-score.
+
+```{r}
+data = read.table('models/bootstrapped_scores_144.txt', header = TRUE)
+benchmark = read.table('models/bootstrapped_scores_benchmark_144.txt', header = TRUE)
+```
+
+# AUC
+```{r}
+t.test(data$auc,benchmark$auc,mu=0,paired=TRUE)
+mean(data$auc,na.rm = TRUE)
+mean(benchmark$auc,na.rm = TRUE)
+hist(data$auc- benchmark$auc,nclass = 20)
+```
+
+# Precision
+```{r}
+t.test(data$precision,benchmark$precision,mu=0,paired=TRUE)
+mean(data$precision,na.rm = TRUE)
+mean(benchmark$precision,na.rm = TRUE)
+hist(data$precision- benchmark$precision,nclass = 20)
+```
+
+# Recall
+```{r}
+t.test(data$recall,benchmark$recall,mu=0,paired=TRUE)
+mean(data$recall,na.rm = TRUE)
+mean(benchmark$recall,na.rm = TRUE)
+hist(data$recall- benchmark$recall,nclass = 20)
+```
+
+# F1-Score
+```{r}
+t.test(data$fscore_pos,benchmark$fscore_pos,mu=0,paired=TRUE)
+mean(data$fscore_pos,na.rm = TRUE)
+mean(benchmark$fscore_pos,na.rm = TRUE)
+hist(data$fscore_pos- benchmark$fscore_pos,nclass = 20)
+```
+
+# F-Score
+```{r}
+t.test(data$fscore_tot,benchmark$fscore_tot,mu=0,paired=TRUE)
+mean(data$fscore_tot,na.rm = TRUE)
+mean(benchmark$fscore_tot,na.rm = TRUE)
+hist(data$fscore_tot- benchmark$fscore_tot,nclass = 20)
+```
+
+
+## Region 232
+
+Loading data from 1000 bootstrap experiments where a sample of 50 was picked from the test set to calculate AUC, precision, recall, F1-score and the overall F-score.
+
+```{r}
+data = read.table('models/bootstrapped_scores_232.txt', header = TRUE)
+benchmark = read.table('models/bootstrapped_scores_benchmark_232.txt', header = TRUE)
+```
+
+# AUC
+```{r}
+t.test(data$auc,benchmark$auc,mu=0,paired=TRUE)
+mean(data$auc,na.rm = TRUE)
+mean(benchmark$auc,na.rm = TRUE)
+hist(data$auc- benchmark$auc,nclass = 20)
+```
+
+# Precision
+```{r}
+t.test(data$precision,benchmark$precision,mu=0,paired=TRUE)
+mean(data$precision,na.rm = TRUE)
+mean(benchmark$precision,na.rm = TRUE)
+hist(data$precision- benchmark$precision,nclass = 20)
+```
+
+# Recall
+```{r}
+t.test(data$recall,benchmark$recall,mu=0,paired=TRUE)
+mean(data$recall,na.rm = TRUE)
+mean(benchmark$recall,na.rm = TRUE)
+hist(data$recall- benchmark$recall,nclass = 20)
+```
+
+# F1-Score
+```{r}
+t.test(data$fscore_pos,benchmark$fscore_pos,mu=0,paired=TRUE)
+mean(data$fscore_pos,na.rm = TRUE)
+mean(benchmark$fscore_pos,na.rm = TRUE)
+hist(data$fscore_pos- benchmark$fscore_pos,nclass = 20)
+```
+
+# F-Score
+```{r}
+t.test(data$fscore_tot,benchmark$fscore_tot,mu=0,paired=TRUE)
+mean(data$fscore_tot,na.rm = TRUE)
+mean(benchmark$fscore_tot,na.rm = TRUE)
+hist(data$fscore_tot- benchmark$fscore_tot,nclass = 20)
+```
+
+
+## Region 310
+
+Loading data from 1000 bootstrap experiments where a sample of 50 was picked from the test set to calculate AUC, precision, recall, F1-score and the overall F-score.
+
+```{r}
+data = read.table('models/bootstrapped_scores_310.txt', header = TRUE)
+benchmark = read.table('models/bootstrapped_scores_benchmark_310.txt', header = TRUE)
+```
+
+# AUC
+```{r}
+t.test(data$auc,benchmark$auc,mu=0,paired=TRUE)
+mean(data$auc,na.rm = TRUE)
+mean(benchmark$auc,na.rm = TRUE)
+hist(data$auc- benchmark$auc,nclass = 20)
+```
+
+# Precision
+```{r}
+t.test(data$precision,benchmark$precision,mu=0,paired=TRUE)
+mean(data$precision,na.rm = TRUE)
+mean(benchmark$precision,na.rm = TRUE)
+hist(data$precision- benchmark$precision,nclass = 20)
+```
+
+# Recall
+```{r}
+t.test(data$recall,benchmark$recall,mu=0,paired=TRUE)
+mean(data$recall,na.rm = TRUE)
+mean(benchmark$recall,na.rm = TRUE)
+hist(data$recall- benchmark$recall,nclass = 20)
+```
+
+# F1-Score
+```{r}
+t.test(data$fscore_pos,benchmark$fscore_pos,mu=0,paired=TRUE)
+mean(data$fscore_pos,na.rm = TRUE)
+mean(benchmark$fscore_pos,na.rm = TRUE)
+hist(data$fscore_pos- benchmark$fscore_pos,nclass = 20)
+```
+
+# F-Score
+```{r}
+t.test(data$fscore_tot,benchmark$fscore_tot,mu=0,paired=TRUE)
+mean(data$fscore_tot,na.rm = TRUE)
+mean(benchmark$fscore_tot,na.rm = TRUE)
+hist(data$fscore_tot- benchmark$fscore_tot,nclass = 20)
+```
