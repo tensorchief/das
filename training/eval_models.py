@@ -129,6 +129,40 @@ def calculate_scores(valid_y, pred_y, valid_Y_np, pred_prob):
     fpr, tpr, _ = roc_curve(valid_Y_np,pred_prob)
     return fpr, tpr, auc(fpr,tpr)
 
+def bootstrap(valid_y, pred_y, sample_length, output_name):
+    """
+    Samples 50 out of sample_length 1000 times and calculates evaluation scores
+    Writes resulting scores to file
+    :param valid_y: true label
+    :param pred_y: predicted label
+    :param sample_length: number of test set examples
+    :output_name: name of output file
+    """
+    test_indices = np.random.choice(len(predicted_label),(1000,50),replace=True)
+    
+    auc_list = list(); precision_list = list(); recall_list = list()
+    fscore_pos_list = list();fscore_tot_list = list()
+    
+    for index in test_indices:
+        fpr_tmp, tpr_tmp, _ = roc_curve(valid_y[index,0],pred_y[index,0])
+        auc_list.append(auc(fpr_tmp,tpr_tmp))
+        output = classification_report([item for item in valid_y[index,0]],
+                                        [round(item) for item in pred_y[index,0]],
+                                        target_names = ['p<10mm','p>=10mm']).split('\n')
+        precision_list.append(float(output[3].split()[1].strip()))
+        recall_list.append(float(output[3].split()[2].strip()))
+        fscore_pos_tmp = float(output[3].split()[3].strip())
+        fscore_neg_tmp = float(output[2].split()[3].strip())
+        fscore_pos_list.append(fscore_pos_tmp)
+        fscore_tot_list.append((fscore_pos_tmp + fscore_neg_tmp)/2)
+
+    with open(output_name,'w') as outfile:
+        outfile.write('auc\tprecision\trecall\tfscore_pos\tfscore_tot\n')
+        for ide,item in enumerate(auc_list):
+            outfile.write(str(item) + '\t' + str(precision_list[ide]) + '\t' + \
+                            str(recall_list[ide]) + '\t' + str(fscore_pos_list[ide]) + '\t' + \
+                            str(fscore_tot_list[ide]) + '\n')
+
 
 def main(region):
 
@@ -161,27 +195,7 @@ def main(region):
                                         Y[:,0], y_score[:,0])
     
     # bootstrap to get standard deviation of auc score
-    test_indices = np.random.choice(len(predicted_label),(1000,50),replace=True)
-    auc_list = list(); precision_list = list(); recall_list = list()
-    fscore_pos_list = list();fscore_tot_list = list()
-    for index in test_indices:
-        fpr_tmp, tpr_tmp, _ = roc_curve(Y[index,0],y_score[index,0])
-        auc_list.append(auc(fpr_tmp,tpr_tmp))
-        output = classification_report([item for item in Y[index,0]],
-                                        [round(item) for item in y_score[index,0]],
-                                        target_names = ['p<10mm','p>=10mm']).split('\n')
-        precision_list.append(float(output[3].split()[1].strip()))
-        recall_list.append(float(output[3].split()[2].strip()))
-        fscore_pos_tmp = float(output[3].split()[3].strip())    
-        fscore_neg_tmp = float(output[2].split()[3].strip())
-        fscore_pos_list.append(fscore_pos_tmp)
-        fscore_tot_list.append((fscore_pos_tmp + fscore_neg_tmp)/2)
-    
-    print("-, AUC, Precision, Recall, F1, F_tot")
-    print("Mean: ", np.nanmean(auc_list), np.nanmean(precision_list),np.nanmean(recall_list),
-            np.nanmean(fscore_pos_list), np.nanmean(fscore_tot_list))
-    print("Std. Deviation: ", np.nanstd(auc_list),np.nanstd(precision_list),np.nanstd(recall_list), 
-            np.nanstd(fscore_pos_list), np.nanstd(fscore_tot_list))
+    bootstrap(Y, y_score, len(predicted_label), 'bootstrapped_scores_'+str(region)+'.txt')
     
     # get benchmark
     benchmark_files = [item for item in \
@@ -200,8 +214,15 @@ def main(region):
     fpr_bench, tpr_bench, roc_auc_bench = calculate_scores(valid_label_bench,\
                                          predicted_label_bench, Y_bench[:,0], pred_bench[:,0])
     fpr_auto, tpr_auto, _ = roc_curve(Y_bench[:,0],autowarn_label)
-    
 
+    auc_list = list(); precision_list = list(); recall_list = list()
+    fscore_pos_list = list();fscore_tot_list = list()
+  
+    # bootstrap to get standard deviation of auc score
+    bootstrap(Y_bench, pred_bench, len(predicted_label_bench),\
+                'bootstrapped_scores_benchmark_'+str(region)+'.txt')
+
+    # plot roc curves
     outdir = '/home/silviar/Dokumente/Abschlussarbeit/training/models/'
     plt.figure()
     plt.plot(fpr,tpr, color = 'deeppink', lw = 2, label = 'CNN (area = %0.2f)'\
